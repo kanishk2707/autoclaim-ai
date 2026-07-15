@@ -2,24 +2,31 @@
 
 AutoClaim AI is an advanced, automated vehicle damage assessment platform that uses a **Tri-Agent architecture** to evaluate claims, detect fraud, and generate explainable cost estimates. Built with React and a modern glassmorphic UI, it provides a seamless experience for both customers submitting claims and adjusters reviewing them.
 
-## 🌟 Key Features
+## ADDITIONAL FEAUTRES ADDED TO MAKE THIS SOLUTION UNIQUE 
 
-- **Tri-Agent AI Adjudication Pipeline:**
+- **TRI-AGENT AI Pipeline:**
+  - USES 3 AI AGENTS TO WORK AND COMMUNICATE WITH EACH OTHER TO PROVIDE EXACT SCORING, THIS IS A UNIQUE FEATURE TO REDUCE ERROS IN THE SYSTEM
   - **Predictor Agent (Vision):** Analyzes uploaded damage photos to identify parts, damage types, severity, dent depths, and impact angles.
   - **Contradictor Agent (Adversarial):** Challenges the Predictor's findings using physics consistency rules and fraud detection heuristics.
   - **Arbiter Agent (Verdict):** Reconciles differences and issues a final, explainable verdict (Auto-Approve, Needs Review, or Escalate to SIU).
+  - ![alt text](image-2.png)
+  - HERE'S THE ATTACHED SCREENSHOT TO REFER TO THE COMMUNICATION BETWEEN AI AGENTS FOR SCORING
 
-- **Continual Learning & Feedback Loop:**
+- **Machine Learning & Feedback Loop:**
   - Captures human adjuster overrides and corrections.
   - Automatically simulates retraining batches to track accuracy improvements over time.
   - Features a Champion/Challenger model registry with rollback capabilities.
+  - ![alt text](image-3.png)
 
 - **Physics Validation & Fraud Detection:**
   - Composite fraud scoring combining physics inconsistencies, agent disagreements, and anomaly detection.
   - Estimates impact speed and validates damage consistency against the reported incident type (e.g., Rear-end vs. Side impact).
+  - ![alt text](image-4.png)
 
 - **Explainable Adjuster Dashboard:**
-  - Focal-point cropped thumbnails highlighting exact damaged regions.
+  - AI HIGHLIGHTS AND CROPS EXACTLY WHERE THE DAMAGE IS AND REASONS IT USING THE TRI AGENT SYSTEM 
+    ![alt text](image-1.png) 
+  - CHECK THE IMAGE TO REFER HOW THE AI HIGLIGHTS AND CROPS IT
   - Full traceability for repair vs. replace decisions and associated costs.
   - Interactive audit logs detailing the exact "conversation" between the 3 AI agents.
 
@@ -49,15 +56,9 @@ AutoClaim AI is an advanced, automated vehicle damage assessment platform that u
    ```bash
    npm install
    ```
-
-3. Set up environment variables:
-   Create a `.env` file in the root directory and add your API keys:
-   ```env
-   VITE_GROQ_API_KEY_1=your_groq_key_here
-   VITE_GEMINI_API_KEY=your_gemini_key_here
    ```
 
-4. Start the development server:
+3. Start the development server:
    ```bash
    npm run dev
    ```
