@@ -1,0 +1,142 @@
+.submit-page .page-header {
+  margin-bottom: var(--space-6);
+}
+
+/* Steps */
+.submit-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: var(--space-8);
+}
+
+.submit-steps-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.submit-steps-row .step-line {
+  width: 48px;
+  margin: 0 var(--space-2);
+}
+
+.submit-steps-row .step {
+  cursor: pointer;
+  background: none;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Form */
+.submit-form {
+  padding: var(--space-8);
+  animation: fadeInUp 0.4s ease;
+}
+
+.form-step {
+  animation: fadeIn 0.3s ease;
+}
+
+.form-step h3 {
+  margin-bottom: var(--space-2);
+}
+
+.form-step-desc {
+  font-size: 0.9rem;
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--space-6);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-5);
+}
+
+.form-grid .full-width {
+  grid-column: 1 / -1;
+}
+
+/* Review */
+.review-sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.review-section {
+  padding: var(--space-5);
+}
+
+.review-section h5 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.9rem;
+  margin-bottom: var(--space-4);
+  color: var(--color-text-primary);
+}
+
+.review-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--space-3);
+}
+
+.review-grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.review-grid span {
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+.review-grid strong {
+  font-size: 0.9rem;
+  color: var(--color-text-primary);
+}
+
+.review-description {
+  margin-top: var(--space-4);
+}
+
+.review-description span {
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+.review-description p {
+  font-size: 0.9rem;
+  margin-top: var(--space-1);
+}
+
+/* Nav */
+.form-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-top: var(--space-8);
+  padding-top: var(--space-6);
+  border-top: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+@media (max-width: 768px) {
+  .form-grid { grid-template-columns: 1fr; }
+  .submit-steps { flex-wrap: wrap; gap: var(--space-2); }
+  .submit-steps-row .step-line { width: 20px; }
+  .submit-form { padding: var(--space-5); }
+}

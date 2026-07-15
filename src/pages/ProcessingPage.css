@@ -1,0 +1,129 @@
+.processing-page {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.processing-header {
+  text-align: center;
+  margin-bottom: var(--space-8);
+}
+
+.processing-agents {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.processing-agents .agent-card {
+  animation: fadeInUp 0.5s ease both;
+  position: relative;
+}
+
+.agent-card-pulse {
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  border: 2px solid var(--color-accent);
+  animation: pulseGlow 2s ease infinite;
+  pointer-events: none;
+}
+
+.agent-card.completed .agent-card-pulse {
+  display: none;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-text-tertiary);
+}
+
+.status-dot.waiting {
+  opacity: 0.4;
+}
+
+/* Log */
+.processing-log {
+  padding: var(--space-5);
+  animation: fadeInUp 0.5s ease 0.3s both;
+}
+
+.processing-log h5 {
+  font-size: 0.85rem;
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--space-3);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.log-messages {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.log-message {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.82rem;
+  color: var(--color-text-secondary);
+  animation: fadeIn 0.3s ease both;
+}
+
+.log-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  flex-shrink: 0;
+}
+
+/* Error */
+.processing-error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  margin-top: var(--space-6);
+  border: 1px solid var(--color-ruby-light);
+  animation: fadeInUp 0.4s ease;
+}
+
+.processing-error svg:first-child {
+  color: var(--color-ruby);
+  flex-shrink: 0;
+}
+
+.processing-error h5 {
+  font-size: 0.95rem;
+  margin-bottom: var(--space-1);
+}
+
+.processing-error p {
+  font-size: 0.85rem;
+}
+
+/* Complete */
+.processing-complete {
+  text-align: center;
+  padding: var(--space-8);
+  color: var(--color-emerald);
+  animation: fadeInUp 0.5s ease;
+}
+
+.processing-complete svg {
+  margin-bottom: var(--space-3);
+  animation: float 2s ease infinite;
+}
+
+.processing-complete p {
+  color: var(--color-emerald);
+  font-weight: 600;
+}
