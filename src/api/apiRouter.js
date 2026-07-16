@@ -26,7 +26,7 @@ export async function aiChat(messages, options = {}) {
     return await geminiChat(combinedPrompt, options);
   }
 
-  throw new Error('No AI API keys available. Please check your Settings to configure your BYOK keys.');
+  throw new Error('No AI API keys available. Please check your .env configuration.');
 }
 
 export async function aiVision(images, prompt, options = {}) {
@@ -42,7 +42,7 @@ export async function aiVision(images, prompt, options = {}) {
     return await geminiVision(images, prompt, options);
   }
 
-  throw new Error('No AI Vision API available. Please check your Settings to configure your BYOK keys.');
+  throw new Error('No AI Vision API available. Please check your .env configuration.');
 }
 
 // Parse JSON from LLM response (handles markdown code blocks)

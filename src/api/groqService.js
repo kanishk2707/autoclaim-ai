@@ -1,8 +1,10 @@
 // Groq API Service — 3-key rotation with rate-limit detection
 function getGroqKeys() {
-  const keysStr = localStorage.getItem('autoclaim_groq_keys');
-  if (!keysStr) return [];
-  return keysStr.split(',').map(k => k.trim()).filter(Boolean);
+  return [
+    import.meta.env.VITE_GROQ_API_KEY_1_REV,
+    import.meta.env.VITE_GROQ_API_KEY_2_REV,
+    import.meta.env.VITE_GROQ_API_KEY_3_REV,
+  ].filter(Boolean);
 }
 
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';

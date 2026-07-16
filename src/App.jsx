@@ -6,7 +6,6 @@ import SubmitClaimPage from './pages/SubmitClaimPage';
 import DashboardPage from './pages/DashboardPage';
 import ClaimDetailPage from './pages/ClaimDetailPage';
 import ProcessingPage from './pages/ProcessingPage';
-import SettingsPage from './pages/SettingsPage';
 import './App.css';
 
 function Navbar() {
@@ -40,12 +39,6 @@ function Navbar() {
               Dashboard
             </NavLink>
           </li>
-          <li>
-            <NavLink to="/settings" className={({ isActive }) => isActive ? 'active' : ''}>
-              <Settings size={16} />
-              Settings
-            </NavLink>
-          </li>
         </ul>
       </div>
     </nav>
@@ -63,7 +56,6 @@ export default function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/claim/:id" element={<ClaimDetailPage />} />
           <Route path="/processing/:id" element={<ProcessingPage />} />
-          <Route path="/settings" element={<SettingsPage />} />
         </Routes>
       </HashRouter>
     </ClaimProvider>

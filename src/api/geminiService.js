@@ -1,6 +1,6 @@
 // Gemini API Service — fallback when Groq keys are exhausted
 function getGeminiKey() {
-  return localStorage.getItem('autoclaim_gemini_key') || '';
+  return import.meta.env.VITE_GEMINI_API_KEY || '';
 }
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
 
