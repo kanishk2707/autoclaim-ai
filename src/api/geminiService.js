@@ -1,5 +1,5 @@
 // Gemini API Service — fallback when Groq keys are exhausted
-const GEMINI_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+const GEMINI_KEY = import.meta.env.VITE_GEMINI_API_KEY ? atob(import.meta.env.VITE_GEMINI_API_KEY) : '';
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
 
 async function sleep(ms) {
