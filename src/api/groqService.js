@@ -106,7 +106,7 @@ export async function groqChat(messages, options = {}) {
 
 export async function groqVision(images, prompt, options = {}) {
   const {
-    model = 'meta-llama/llama-4-scout-17b-16e-instruct',
+    model = 'llama-3.2-90b-vision-preview',
     temperature = 0.2,
     maxTokens = 4096,
     responseFormat = null,
