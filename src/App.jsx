@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
+import { HashRouter, Routes, Route, NavLink } from 'react-router-dom';
 import { Shield, Upload, BarChart3, Home } from 'lucide-react';
 import { ClaimProvider } from './context/ClaimContext';
 import HomePage from './pages/HomePage';
@@ -48,7 +48,7 @@ function Navbar() {
 export default function App() {
   return (
     <ClaimProvider>
-      <BrowserRouter>
+      <HashRouter>
         <Navbar />
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -57,7 +57,7 @@ export default function App() {
           <Route path="/claim/:id" element={<ClaimDetailPage />} />
           <Route path="/processing/:id" element={<ProcessingPage />} />
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
     </ClaimProvider>
   );
 }
