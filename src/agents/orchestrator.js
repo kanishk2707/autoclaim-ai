@@ -122,7 +122,7 @@ export async function runTriAgentPipeline({
     return {
       success: false,
       error: error.message,
-      processing_time_seconds: ((endTime - startTime) / 1000).toFixed(1),
+      processing_time_seconds: parseFloat(((endTime - startTime) / 1000).toFixed(1)),
       agent_logs: agentLogs,
       pipeline_version: '1.0',
     };

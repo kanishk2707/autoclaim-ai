@@ -13,7 +13,34 @@ function loadClaims() {
 }
 
 function saveClaims(claims) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(claims));
+  try {
+    // Strip base64 image data before persisting to avoid hitting localStorage's 5MB quota.
+    // The images are already displayed from results.imagePreviews during the session,
+    // but we don't need multi-MB base64 strings surviving across reloads.
+    const lightweight = claims.map(c => {
+      if (!c.imagePreviews && !c.results?.imagePreviews) return c;
+      const clone = { ...c };
+      // Strip claim-level base64 previews
+      if (Array.isArray(clone.imagePreviews)) {
+        clone.imagePreviews = clone.imagePreviews.map(p => {
+          const url = typeof p === 'string' ? p : p?.url;
+          return url && url.startsWith('data:') ? '[base64-stripped]' : url;
+        });
+      }
+      // Strip results-level base64 previews
+      if (clone.results && Array.isArray(clone.results.imagePreviews)) {
+        clone.results = { ...clone.results };
+        clone.results.imagePreviews = clone.results.imagePreviews.map(p => {
+          const url = typeof p === 'string' ? p : p?.url;
+          return url && url.startsWith('data:') ? '[base64-stripped]' : url;
+        });
+      }
+      return clone;
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(lightweight));
+  } catch (e) {
+    console.warn('Failed to save claims to localStorage:', e.message);
+  }
 }
 
 const initialState = {

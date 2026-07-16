@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Eye, Shield, Brain, CheckCircle, Loader, AlertTriangle } from 'lucide-react';
 import { useClaims } from '../context/ClaimContext';
@@ -24,6 +24,10 @@ export default function ProcessingPage() {
   const [resultClaimId, setResultClaimId] = useState(null);
 
   const { images, imagePreviews, incident, vehicle, claimId } = location.state || {};
+
+  // Keep a ref to the latest claims to avoid stale closure in async callback
+  const claimsRef = useRef(state.claims);
+  useEffect(() => { claimsRef.current = state.claims; }, [state.claims]);
 
   useEffect(() => {
     if (!images || images.length === 0) {
@@ -65,11 +69,12 @@ export default function ProcessingPage() {
         });
 
         if (result.success) {
-          // Find the claim in state and update it
-          const targetClaim = state.claims[0]; // Most recent
+          // Use ref to get the latest claims (avoids stale closure)
+          const latestClaims = claimsRef.current;
+          const targetClaim = latestClaims[0]; // Most recent
           if (targetClaim) {
-            // Add image previews to results
-            result.imagePreviews = imagePreviews;
+            // Normalize image previews to plain URL strings before saving
+            result.imagePreviews = (imagePreviews || []).map(p => typeof p === 'string' ? p : p.url).filter(Boolean);
             result.vehicle = vehicle;
             result.incident = incident;
             dispatch({

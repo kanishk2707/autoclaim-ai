@@ -131,23 +131,38 @@ const INCIDENT_PATTERNS = {
 export function classifyIncident(description) {
   const desc = description.toLowerCase();
 
-  if (desc.includes('parking') || desc.includes('park') || desc.includes('garage'))
-    return 'parking_scratch';
-  if (desc.includes('rear end') || desc.includes('rear-end') || desc.includes('hit from behind') || desc.includes('behind'))
-    return 'rear_end';
-  if (desc.includes('head on') || desc.includes('head-on') || desc.includes('frontal'))
-    return 'head_on';
-  if (desc.includes('side') || desc.includes('t-bone') || desc.includes('lateral'))
-    return 'side_impact';
-  if (desc.includes('roll') || desc.includes('flip') || desc.includes('overturn'))
+  // Helper: match whole-word boundaries to avoid substring collisions
+  const has = (words) => {
+    for (const w of words) {
+      // Multi-word phrases: simple includes is fine
+      if (w.includes(' ') || w.includes('-')) {
+        if (desc.includes(w)) return true;
+      } else {
+        // Single words: require word boundary to avoid e.g. "park" matching "parking"
+        if (new RegExp(`\\b${w}\\b`).test(desc)) return true;
+      }
+    }
+    return false;
+  };
+
+  // Order matters: check more specific patterns first
+  if (has(['rollover', 'rolled over', 'flipped', 'overturned']))
     return 'rollover';
-  if (desc.includes('hit and run') || desc.includes('hit-and-run') || desc.includes('fled'))
+  if (has(['head-on', 'head on', 'frontal collision']))
+    return 'head_on';
+  if (has(['hit-and-run', 'hit and run', 'fled the scene']))
     return 'hit_and_run';
-  if (desc.includes('vandal') || desc.includes('keyed') || desc.includes('deliberate') || desc.includes('intentional'))
+  if (has(['rear-end', 'rear end', 'hit from behind', 'rammed from behind']))
+    return 'rear_end';
+  if (has(['t-bone', 'side impact', 'lateral collision', 'side collision']))
+    return 'side_impact';
+  if (has(['vandalism', 'vandal', 'keyed', 'deliberate', 'intentional']))
     return 'vandalism';
-  if (desc.includes('flood') || desc.includes('storm') || desc.includes('hail') || desc.includes('tree') || desc.includes('natural'))
+  if (has(['flood', 'storm', 'hail', 'fallen tree', 'natural disaster']))
     return 'natural_disaster';
-  if (desc.includes('low speed') || desc.includes('slow') || desc.includes('minor'))
+  if (has(['parking lot', 'parking scratch', 'parked', 'garage bump']))
+    return 'parking_scratch';
+  if (has(['low speed', 'slow', 'minor collision', 'fender bender']))
     return 'low_speed_collision';
 
   return 'low_speed_collision'; // default

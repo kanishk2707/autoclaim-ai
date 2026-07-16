@@ -56,7 +56,6 @@ AutoClaim AI is an advanced, automated vehicle damage assessment platform that u
    ```bash
    npm install
    ```
-   ```
 
 3. Start the development server:
    ```bash

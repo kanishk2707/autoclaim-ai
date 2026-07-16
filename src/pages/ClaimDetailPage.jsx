@@ -110,6 +110,7 @@ export default function ClaimDetailPage() {
 
   const imagePreviewsRaw = results.imagePreviews || claim.imagePreviews || [];
   const imagePreviews = imagePreviewsRaw.map(p => typeof p === 'string' ? p : p.url).filter(Boolean);
+  const safeImageIndex = Math.min(activeImageIndex, Math.max(0, imagePreviews.length - 1));
 
   return (
     <div className="page claim-detail-page">
@@ -159,7 +160,7 @@ export default function ClaimDetailPage() {
               {imagePreviews.length > 0 ? (
                 <>
                   <div className="damage-image-main">
-                    <img src={imagePreviews[activeImageIndex]} alt="Vehicle damage" />
+                    <img src={imagePreviews[safeImageIndex]} alt="Vehicle damage" />
                   </div>
                   {imagePreviews.length > 1 && (
                     <div className="damage-thumbnails">
@@ -197,7 +198,7 @@ export default function ClaimDetailPage() {
                           <select className="form-input" value={editValue} onChange={e => setEditValue(e.target.value)} style={{ padding: '4px 8px', fontSize: '0.82rem' }}>
                             {['scratch', 'dent', 'crack', 'shatter', 'structural_deformation'].map(t => <option key={t} value={t}>{t}</option>)}
                           </select>
-                          <button className="btn btn-sm btn-primary" onClick={() => saveEdit('damage_type', region.damage_type)}><Save size={12} /></button>
+                          <button className="btn btn-sm btn-primary" onClick={() => saveEdit(`type_${i}`, region.damage_type)}><Save size={12} /></button>
                           <button className="btn btn-sm btn-outline" onClick={cancelEdit}><X size={12} /></button>
                         </div>
                       ) : (

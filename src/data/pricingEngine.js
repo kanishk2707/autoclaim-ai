@@ -215,7 +215,7 @@ export const PARTS_DB = {
     repair: { min: 500, max: 2000 },
     repaint: null,
     laborHours: { replace: 0.5, repair: 0.5 },
-    partCode: 'TR-001',
+    partCode: 'TI-001',
   },
 };
 

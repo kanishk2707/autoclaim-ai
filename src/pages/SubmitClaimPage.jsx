@@ -191,6 +191,10 @@ export default function SubmitClaimPage() {
                   <label className="form-label">Phone</label>
                   <input className="form-input" placeholder="+91 98765 43210" value={vehicle.phone} onChange={e => setVehicle(v => ({ ...v, phone: e.target.value }))} id="vehicle-phone" />
                 </div>
+                <div className="form-group">
+                  <label className="form-label">Email</label>
+                  <input type="email" className="form-input" placeholder="name@example.com" value={vehicle.email} onChange={e => setVehicle(v => ({ ...v, email: e.target.value }))} id="vehicle-email" />
+                </div>
               </div>
             </div>
           )}
