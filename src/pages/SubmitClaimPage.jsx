@@ -104,6 +104,7 @@ export default function SubmitClaimPage() {
   const prevStep = () => setStep(s => Math.max(s - 1, 0));
 
   const handleSubmit = async () => {
+    if (!validateStep()) return;
     setSubmitting(true);
 
     const claimId = `CLM-${Date.now()}`;

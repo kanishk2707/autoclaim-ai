@@ -22,6 +22,7 @@ export async function runTriAgentPipeline({
 }) {
   const startTime = Date.now();
   const agentLogs = [];
+  const validImages = (images || []).filter(img => typeof img === 'string' && img !== '[base64-stripped]' && img.trim() !== '');
 
   try {
     // ─── Stage 1: Predictor ───
@@ -29,7 +30,7 @@ export async function runTriAgentPipeline({
     agentLogs.push({ agent: 'predictor', status: 'running', startedAt: new Date().toISOString() });
 
     const predictorResult = await runPredictor(
-      images,
+      validImages,
       vehicleInfo,
       (msg) => onProgress('predictor', msg, 0)
     );
@@ -78,7 +79,7 @@ export async function runTriAgentPipeline({
       contradictorResult,
       incidentDescription,
       vehicleInfo,
-      images,
+      validImages,
       (msg) => onProgress('arbiter', msg, 2)
     );
 

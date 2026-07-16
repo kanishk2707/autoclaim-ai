@@ -63,6 +63,13 @@ export default function ProcessingPage() {
       return;
     }
 
+    // If the browser was refreshed after images were stripped, abort pipeline to prevent crash
+    if (activeImages.some(img => img === '[base64-stripped]' || img?.url === '[base64-stripped]')) {
+      setError('Damage images were lost during browser refresh. Please submit the claim again.');
+      setAgentStatuses(['done', 'done', 'done']);
+      return;
+    }
+
     const run = async () => {
       try {
         const result = await runTriAgentPipeline({

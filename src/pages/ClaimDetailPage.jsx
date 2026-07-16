@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { ArrowLeft, CheckCircle, Clock, ShieldAlert, AlertTriangle, ChevronDown, ChevronUp, Edit3, Save, X, Eye, Shield, Brain, FileText, Download } from 'lucide-react';
 import { useClaims } from '../context/ClaimContext';
 import { captureSurveyorCorrection } from '../data/feedbackLoop';
-import { PARTS_DB, CURRENCY_SYMBOL } from '../data/pricingEngine';
+import { PARTS_DB, CURRENCY_SYMBOL, estimateTotalCost } from '../data/pricingEngine';
 import './ClaimDetailPage.css';
 
 function formatCurrency(amount) {
@@ -73,7 +73,17 @@ export default function ClaimDetailPage() {
   }
 
   const regions = results.final_damage_regions || results.agent_outputs?.predictor?.damage_regions || [];
-  const costBreakdown = results.cost_breakdown || results.agent_outputs?.predictor?.cost_breakdown;
+  
+  // Apply overrides to regions for dynamic cost recalculation
+  const effectiveRegions = regions.map((r, i) => {
+    const overrideType = claim.overrides?.[`type_${i}`];
+    return overrideType ? { ...r, damage_type: overrideType } : r;
+  });
+
+  const hasOverrides = Object.keys(claim.overrides || {}).some(k => k.startsWith('type_'));
+  const costBreakdown = hasOverrides 
+    ? estimateTotalCost(effectiveRegions, claim.vehicle?.segment || 'sedan') 
+    : (results.cost_breakdown || results.agent_outputs?.predictor?.cost_breakdown);
   const fraudAnalysis = results.fraud_analysis;
   const riskScores = results.risk_scores || {};
   const agentOutputs = results.agent_outputs || {};
@@ -182,7 +192,7 @@ export default function ClaimDetailPage() {
             {/* §9.2-9.5 — Detection Summary with editable fields */}
             <div className="detail-section glass-strong">
               <h3><FileText size={18} /> Detection Results</h3>
-              {regions.map((region, i) => (
+              {effectiveRegions.map((region, i) => (
                 <div key={i} className="detection-item">
                   <div className="detection-item-header">
                     <span className="detection-part">{PARTS_DB[region.part]?.name || region.part}</span>
@@ -269,8 +279,8 @@ export default function ClaimDetailPage() {
             {/* §9 — Explainable Cost Breakdown */}
             <div className="detail-section glass-strong">
               <h3>
-                <span>Cost Breakdown</span>
-                <span className="cost-total">{formatCurrency(results.estimated_cost)}</span>
+                <span>Cost Breakdown {hasOverrides && '(Recalculated)'}</span>
+                <span className="cost-total">{formatCurrency(costBreakdown?.total || results.estimated_cost)}</span>
               </h3>
               {costBreakdown?.lineItems ? (
                 <table className="data-table cost-table">

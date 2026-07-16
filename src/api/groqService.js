@@ -11,6 +11,7 @@ let currentKeyIndex = 0;
 const keyFailCounts = new Map();
 
 function getNextKey() {
+  if (GROQ_KEYS.length === 0) return null;
   const startIndex = currentKeyIndex;
   do {
     const key = GROQ_KEYS[currentKeyIndex];

@@ -18,6 +18,8 @@ function saveClaims(claims) {
     // The images are already displayed from results.imagePreviews during the session,
     // but we don't need multi-MB base64 strings surviving across reloads.
     const lightweight = claims.map(c => {
+      // Keep images for active processing so they survive browser refreshes
+      if (c.status === 'processing') return c;
       if (!c.imagePreviews && !c.results?.imagePreviews) return c;
       const clone = { ...c };
       // Strip claim-level base64 previews
