@@ -1,5 +1,5 @@
 import { HashRouter, Routes, Route, NavLink } from 'react-router-dom';
-import { Shield, Upload, BarChart3, Home, Settings } from 'lucide-react';
+import { Shield, Upload, BarChart3, Home } from 'lucide-react';
 import { ClaimProvider } from './context/ClaimContext';
 import HomePage from './pages/HomePage';
 import SubmitClaimPage from './pages/SubmitClaimPage';
