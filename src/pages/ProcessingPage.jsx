@@ -26,35 +26,33 @@ export default function ProcessingPage() {
   const { imagePreviews, incident, vehicle } = location.state || {};
   const { id: routeClaimId } = useParams();
 
-  // Try to load claim directly from localStorage if location.state is lost (refresh)
-  const getClaimFallback = () => {
-    try {
-      const stored = JSON.parse(localStorage.getItem('autoclaim_claims') || '[]');
-      return stored.find(c => c.id === routeClaimId);
-    } catch {
-      return null;
-    }
-  };
-
-  const fallbackClaim = !location.state ? getClaimFallback() : null;
+  // Since context loads async, read from localStorage synchronously for initial render
+  const initialClaims = useRef(JSON.parse(localStorage.getItem('autoclaim_claims') || '[]'));
+  
+  // Find current claim from either Context or initial load
+  const activeClaim = state.claims.find(c => c.id === routeClaimId) || initialClaims.current.find(c => c.id === routeClaimId);
 
   // If the claim is already processed, redirect to details immediately
   useEffect(() => {
-    if (fallbackClaim && fallbackClaim.status !== 'processing') {
-      navigate(`/claim/${routeClaimId}`);
+    const claim = state.claims.find(c => c.id === routeClaimId) || initialClaims.current.find(c => c.id === routeClaimId);
+    if (claim && claim.status !== 'processing') {
+      navigate(`/claim/${routeClaimId}`, { replace: true });
     }
-  }, [fallbackClaim, routeClaimId, navigate]);
+  }, [routeClaimId, navigate, state.claims]);
 
-  const activeImages = imagePreviews || fallbackClaim?.imagePreviews || [];
-  const activeIncident = incident || fallbackClaim?.incident;
-  const activeVehicle = vehicle || fallbackClaim?.vehicle;
+  const activeImages = imagePreviews || activeClaim?.imagePreviews || [];
+  const activeIncident = incident || activeClaim?.incident;
+  const activeVehicle = vehicle || activeClaim?.vehicle;
 
   // Keep a ref to the latest claims to avoid stale closure in async callback
   const claimsRef = useRef(state.claims);
   useEffect(() => { claimsRef.current = state.claims; }, [state.claims]);
+  
+  const timeoutRef = useRef(null);
 
   useEffect(() => {
-    if (fallbackClaim && fallbackClaim.status !== 'processing') {
+    const claim = claimsRef.current.find(c => c.id === routeClaimId) || initialClaims.current.find(c => c.id === routeClaimId);
+    if (claim && claim.status !== 'processing') {
       return;
     }
 
@@ -69,6 +67,8 @@ export default function ProcessingPage() {
       setAgentStatuses(['done', 'done', 'done']);
       return;
     }
+
+    let isMounted = true;
 
     const run = async () => {
       try {
@@ -106,44 +106,59 @@ export default function ProcessingPage() {
         if (result.success) {
           // Use ref to get the latest claims (avoids stale closure)
           const latestClaims = claimsRef.current;
-          const targetClaim = latestClaims.find(c => c.id === routeClaimId) || latestClaims[0];
-          if (targetClaim) {
+          const targetClaim = latestClaims.find(c => c.id === routeClaimId);
+          if (!targetClaim) {
+            if (isMounted) setError('Claim not found. Pipeline aborted.');
+            return;
+          }
+          
+          if (isMounted) {
             // Normalize image previews to plain URL strings before saving
-            result.imagePreviews = (imagePreviews || []).map(p => typeof p === 'string' ? p : p.url).filter(Boolean);
-            result.vehicle = vehicle;
-            result.incident = incident;
+            // Use activeImages instead of imagePreviews to ensure data survives refresh
+            result.imagePreviews = activeImages.map(p => typeof p === 'string' ? p : p.url).filter(Boolean);
+            result.vehicle = activeVehicle;
+            result.incident = activeIncident;
             dispatch({
               type: 'SET_RESULTS',
               payload: { claimId: targetClaim.id, results: result },
             });
             setResultClaimId(targetClaim.id);
-          }
-          setCompleted(true);
-          setMessages(prev => [...prev, `✅ Assessment complete — ${result.recommendation.replace(/_/g, ' ')}`]);
+            setCompleted(true);
+            setMessages(prev => [...prev, `✅ Assessment complete — ${result.recommendation.replace(/_/g, ' ')}`]);
 
-          // Navigate to detail after brief delay
-          setTimeout(() => {
-            if (targetClaim) navigate(`/claim/${targetClaim.id}`);
-          }, 2500);
+            // Navigate to detail after brief delay
+            timeoutRef.current = setTimeout(() => {
+              if (isMounted) navigate(`/claim/${targetClaim.id}`, { replace: true });
+            }, 2500);
+          }
         } else {
-          setError(result.error);
-          const latestClaims = claimsRef.current;
-          const targetClaim = latestClaims.find(c => c.id === routeClaimId) || latestClaims[0];
-          if (targetClaim) {
-            dispatch({ type: 'SET_ERROR', payload: { claimId: targetClaim.id, error: result.error } });
+          if (isMounted) {
+            setError(result.error);
+            const latestClaims = claimsRef.current;
+            const targetClaim = latestClaims.find(c => c.id === routeClaimId);
+            if (targetClaim) {
+              dispatch({ type: 'SET_ERROR', payload: { claimId: targetClaim.id, error: result.error } });
+            }
           }
         }
       } catch (err) {
-        setError(err.message);
-        const latestClaims = claimsRef.current;
-        const targetClaim = latestClaims.find(c => c.id === routeClaimId) || latestClaims[0];
-        if (targetClaim) {
-          dispatch({ type: 'SET_ERROR', payload: { claimId: targetClaim.id, error: err.message } });
+        if (isMounted) {
+          setError(err.message);
+          const latestClaims = claimsRef.current;
+          const targetClaim = latestClaims.find(c => c.id === routeClaimId);
+          if (targetClaim) {
+            dispatch({ type: 'SET_ERROR', payload: { claimId: targetClaim.id, error: err.message } });
+          }
         }
       }
     };
 
     run();
+
+    return () => {
+      isMounted = false;
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
   }, []); // eslint-disable-line
 
   return (

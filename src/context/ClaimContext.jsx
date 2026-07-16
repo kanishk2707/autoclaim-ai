@@ -39,7 +39,20 @@ function saveClaims(claims) {
       }
       return clone;
     });
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(lightweight));
+    
+    const serialized = JSON.stringify(lightweight);
+    try {
+      localStorage.setItem(STORAGE_KEY, serialized);
+    } catch (e) {
+      if (e.name === 'QuotaExceededError' || e.message.toLowerCase().includes('quota')) {
+        console.warn('LocalStorage quota exceeded. Evicting older claims to save active claim.');
+        // Keep only the 5 most recent claims if quota is exceeded
+        const recentClaims = lightweight.slice(0, 5);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(recentClaims));
+      } else {
+        throw e;
+      }
+    }
   } catch (e) {
     console.warn('Failed to save claims to localStorage:', e.message);
   }

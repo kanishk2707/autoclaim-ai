@@ -37,6 +37,11 @@ export default function SubmitClaimPage() {
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const fileInputRef = useRef(null);
+  const imagesRef = useRef(images);
+  
+  // Keep ref in sync with state for synchronous callbacks
+  imagesRef.current = images;
+
   const navigate = useNavigate();
   const { dispatch } = useClaims();
 
@@ -51,7 +56,7 @@ export default function SubmitClaimPage() {
     const files = Array.from(e.target.files || e.dataTransfer?.files || []);
     const validFiles = files.filter(f => f.type.startsWith('image/'));
 
-    if (images.length + validFiles.length > 10) {
+    if (imagesRef.current.length + validFiles.length > 10) {
       setErrors(prev => ({ ...prev, images: 'Maximum 10 images allowed' }));
       return;
     }
@@ -67,7 +72,7 @@ export default function SubmitClaimPage() {
     });
 
     setErrors(prev => ({ ...prev, images: undefined }));
-  }, [images]);
+  }, []);
 
   const removeImage = (index) => {
     setImages(prev => prev.filter((_, i) => i !== index));
