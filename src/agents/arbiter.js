@@ -7,7 +7,7 @@ import { estimateTotalCost } from '../data/pricingEngine';
 // Configurable thresholds (per §5.4 — must be configurable, not hardcoded)
 export const CONFIG = {
   confidenceThreshold: 0.85,
-  fraudThreshold: 0.40,
+  fraudThreshold: 40, // 0-100 scale to match fraudResult.score
   autoApprovalCostCap: 50000, // INR
   highSeverityChallengeForceReanalysis: true,
 };
@@ -38,7 +38,7 @@ VEHICLE INFO:
 
 CONFIGURATION:
 - Confidence threshold: {confidenceThreshold}
-- Fraud score threshold: {fraudThreshold}
+- Fraud score threshold: {fraudThreshold}%
 - Auto-approval cost cap: ₹{autoApprovalCostCap}
 
 RULES (§5.4):
@@ -152,7 +152,7 @@ export async function runArbiter(predictorOutput, contradictorOutput, incidentDe
   const confidence = Math.min(1, Math.max(0, parseFloat(parsed.confidence) || 0.5));
 
   // Rule: Fraud score ≥ threshold → NEVER auto-approve
-  if (fraudResult.score >= CONFIG.fraudThreshold * 100) {
+  if (fraudResult.score >= CONFIG.fraudThreshold) {
     recommendation = 'escalate_siu';
     requiresHumanReview = true;
   }

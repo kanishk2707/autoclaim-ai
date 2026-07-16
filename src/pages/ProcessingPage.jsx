@@ -26,12 +26,39 @@ export default function ProcessingPage() {
   const { images, imagePreviews, incident, vehicle, claimId } = location.state || {};
   const { id: routeClaimId } = useParams();
 
+  // Try to load claim directly from localStorage if location.state is lost (refresh)
+  const getClaimFallback = () => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('autoclaim_claims') || '[]');
+      return stored.find(c => c.id === routeClaimId);
+    } catch {
+      return null;
+    }
+  };
+
+  const fallbackClaim = !location.state ? getClaimFallback() : null;
+
+  // If the claim is already processed, redirect to details immediately
+  useEffect(() => {
+    if (fallbackClaim && fallbackClaim.status !== 'processing') {
+      navigate(`/claim/${routeClaimId}`);
+    }
+  }, [fallbackClaim, routeClaimId, navigate]);
+
+  const activeImages = imagePreviews || fallbackClaim?.imagePreviews || [];
+  const activeIncident = incident || fallbackClaim?.incident;
+  const activeVehicle = vehicle || fallbackClaim?.vehicle;
+
   // Keep a ref to the latest claims to avoid stale closure in async callback
   const claimsRef = useRef(state.claims);
   useEffect(() => { claimsRef.current = state.claims; }, [state.claims]);
 
   useEffect(() => {
-    if (!images || images.length === 0) {
+    if (fallbackClaim && fallbackClaim.status !== 'processing') {
+      return;
+    }
+
+    if (activeImages.length === 0) {
       navigate('/submit');
       return;
     }
@@ -39,13 +66,13 @@ export default function ProcessingPage() {
     const run = async () => {
       try {
         const result = await runTriAgentPipeline({
-          images: imagePreviews && imagePreviews.length > 0 ? imagePreviews.map(p => typeof p === 'string' ? p : p.url).filter(Boolean) : images,
-          incidentDescription: incident?.description || '',
+          images: activeImages.map(p => typeof p === 'string' ? p : p.url).filter(Boolean),
+          incidentDescription: activeIncident?.description || '',
           vehicleInfo: {
-            ...vehicle,
-            incidentDate: incident?.date,
-            incidentLocation: incident?.location,
-            incidentType: incident?.type,
+            ...activeVehicle,
+            incidentDate: activeIncident?.date,
+            incidentLocation: activeIncident?.location,
+            incidentType: activeIncident?.type,
           },
           onProgress: (stage, message, agentIndex) => {
             setMessages(prev => [...prev.slice(-8), message]);
