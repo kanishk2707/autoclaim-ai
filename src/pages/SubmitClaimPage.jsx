@@ -106,7 +106,9 @@ export default function SubmitClaimPage() {
   const handleSubmit = async () => {
     setSubmitting(true);
 
+    const claimId = `CLM-${Date.now()}`;
     const claimData = {
+      id: claimId,
       vehicle,
       incident,
       imageCount: images.length,
@@ -117,7 +119,6 @@ export default function SubmitClaimPage() {
     dispatch({ type: 'SET_PROCESSING', payload: true });
 
     // Navigate to processing view
-    const claimId = `CLM-${Date.now()}`;
     navigate(`/processing/${claimId}`, {
       state: {
         images,

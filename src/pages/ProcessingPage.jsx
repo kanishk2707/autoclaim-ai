@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Eye, Shield, Brain, CheckCircle, Loader, AlertTriangle } from 'lucide-react';
 import { useClaims } from '../context/ClaimContext';
 import { runTriAgentPipeline } from '../agents/orchestrator';
@@ -24,6 +24,7 @@ export default function ProcessingPage() {
   const [resultClaimId, setResultClaimId] = useState(null);
 
   const { images, imagePreviews, incident, vehicle, claimId } = location.state || {};
+  const { id: routeClaimId } = useParams();
 
   // Keep a ref to the latest claims to avoid stale closure in async callback
   const claimsRef = useRef(state.claims);
@@ -38,7 +39,7 @@ export default function ProcessingPage() {
     const run = async () => {
       try {
         const result = await runTriAgentPipeline({
-          images,
+          images: imagePreviews && imagePreviews.length > 0 ? imagePreviews.map(p => typeof p === 'string' ? p : p.url).filter(Boolean) : images,
           incidentDescription: incident?.description || '',
           vehicleInfo: {
             ...vehicle,
@@ -71,7 +72,7 @@ export default function ProcessingPage() {
         if (result.success) {
           // Use ref to get the latest claims (avoids stale closure)
           const latestClaims = claimsRef.current;
-          const targetClaim = latestClaims[0]; // Most recent
+          const targetClaim = latestClaims.find(c => c.id === routeClaimId) || latestClaims[0];
           if (targetClaim) {
             // Normalize image previews to plain URL strings before saving
             result.imagePreviews = (imagePreviews || []).map(p => typeof p === 'string' ? p : p.url).filter(Boolean);
@@ -92,12 +93,19 @@ export default function ProcessingPage() {
           }, 2500);
         } else {
           setError(result.error);
-          if (state.claims[0]) {
-            dispatch({ type: 'SET_ERROR', payload: { claimId: state.claims[0].id, error: result.error } });
+          const latestClaims = claimsRef.current;
+          const targetClaim = latestClaims.find(c => c.id === routeClaimId) || latestClaims[0];
+          if (targetClaim) {
+            dispatch({ type: 'SET_ERROR', payload: { claimId: targetClaim.id, error: result.error } });
           }
         }
       } catch (err) {
         setError(err.message);
+        const latestClaims = claimsRef.current;
+        const targetClaim = latestClaims.find(c => c.id === routeClaimId) || latestClaims[0];
+        if (targetClaim) {
+          dispatch({ type: 'SET_ERROR', payload: { claimId: targetClaim.id, error: err.message } });
+        }
       }
     };
 

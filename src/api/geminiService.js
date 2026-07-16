@@ -80,12 +80,12 @@ export async function geminiVision(images, prompt, options = {}) {
       const base64 = img.split(',')[1];
       const mimeType = img.split(';')[0].split(':')[1];
       parts.push({
-        inline_data: { mime_type: mimeType, data: base64 },
+        inlineData: { mimeType: mimeType, data: base64 },
       });
     } else if (img instanceof File || img instanceof Blob) {
       const { base64, mimeType } = await fileToBase64Raw(img);
       parts.push({
-        inline_data: { mime_type: mimeType, data: base64 },
+        inlineData: { mimeType: mimeType, data: base64 },
       });
     }
   }

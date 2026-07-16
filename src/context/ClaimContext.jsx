@@ -58,7 +58,7 @@ function claimReducer(state, action) {
     case 'SUBMIT_CLAIM': {
       const newClaim = {
         ...action.payload,
-        id: `CLM-${Date.now()}`,
+        id: action.payload.id || `CLM-${Date.now()}`,
         status: 'processing',
         submittedAt: new Date().toISOString(),
       };
