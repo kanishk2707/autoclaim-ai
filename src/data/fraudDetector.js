@@ -124,7 +124,7 @@ export function computeFraudScore({
  * Analyze image metadata for forensic anomalies
  * (Simplified — real implementation would check EXIF data)
  */
-export function analyzeImageMetadata(files, incidentDate, incidentLocation) {
+export function analyzeImageMetadata(files, incidentDate, _incidentLocation) {
   const anomalies = [];
   let anomalyScore = 0;
 

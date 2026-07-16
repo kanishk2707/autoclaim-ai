@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { BarChart3, Clock, CheckCircle, AlertTriangle, ShieldAlert, FileText, ChevronRight, Trash2, TrendingUp, RefreshCw } from 'lucide-react';
+import { Clock, CheckCircle, AlertTriangle, ShieldAlert, FileText, ChevronRight, Trash2, TrendingUp, RefreshCw } from 'lucide-react';
 import { useClaims } from '../context/ClaimContext';
 import { getFeedbackStats, getModelVersions, simulateRetraining, promoteModel } from '../data/feedbackLoop';
 import { useState } from 'react';

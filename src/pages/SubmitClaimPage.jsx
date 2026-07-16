@@ -2,7 +2,6 @@ import { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Upload, X, Camera, Car, FileText, CheckCircle, ChevronRight, ChevronLeft, AlertCircle, Zap } from 'lucide-react';
 import { useClaims } from '../context/ClaimContext';
-import { runTriAgentPipeline } from '../agents/orchestrator';
 import { isGroqAvailable } from '../api/groqService';
 import { isGeminiAvailable } from '../api/geminiService';
 import './SubmitClaimPage.css';
@@ -132,8 +131,7 @@ export default function SubmitClaimPage() {
     // Navigate to processing view
     navigate(`/processing/${claimId}`, {
       state: {
-        images,
-        imagePreviews,
+        imagePreviews: imagePreviews,
         incident,
         vehicle,
         claimId: claimId,

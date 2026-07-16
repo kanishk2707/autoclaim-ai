@@ -87,7 +87,7 @@ export async function runContradictor(predictorOutput, incidentDescription, vehi
   let parsed;
   try {
     parsed = parseJsonResponse(response);
-  } catch (e) {
+  } catch {
     console.error('Failed to parse Contradictor response:', response);
     // Return minimal challenges on parse failure
     parsed = {

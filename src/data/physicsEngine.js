@@ -40,14 +40,7 @@ const SEVERITY_SPEED_MAP = {
   critical: { min: 40, max: 100, label: '40–100+ km/h' },
 };
 
-// Damage type to force characteristics
-const DAMAGE_FORCE_PROFILE = {
-  scratch: { depth: 'surface', force: 'low', requiresImpact: false },
-  dent: { depth: 'shallow', force: 'moderate', requiresImpact: true },
-  crack: { depth: 'through', force: 'high', requiresImpact: true },
-  shatter: { depth: 'complete', force: 'very_high', requiresImpact: true },
-  structural_deformation: { depth: 'deep', force: 'extreme', requiresImpact: true },
-};
+
 
 // Incident type to expected damage patterns
 const INCIDENT_PATTERNS = {

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { Eye, Shield, Brain, CheckCircle, Loader, AlertTriangle } from 'lucide-react';
+import { Eye, Shield, Brain, CheckCircle, AlertTriangle } from 'lucide-react';
 import { useClaims } from '../context/ClaimContext';
 import { runTriAgentPipeline } from '../agents/orchestrator';
 import './ProcessingPage.css';
@@ -16,14 +16,14 @@ export default function ProcessingPage() {
   const navigate = useNavigate();
   const { dispatch, state } = useClaims();
 
-  const [activeAgent, setActiveAgent] = useState(-1);
+  const [, setActiveAgent] = useState(-1);
   const [agentStatuses, setAgentStatuses] = useState(['waiting', 'waiting', 'waiting']);
   const [messages, setMessages] = useState(['Initializing tri-agent pipeline...']);
   const [error, setError] = useState(null);
   const [completed, setCompleted] = useState(false);
-  const [resultClaimId, setResultClaimId] = useState(null);
+  const [, setResultClaimId] = useState(null);
 
-  const { images, imagePreviews, incident, vehicle, claimId } = location.state || {};
+  const { imagePreviews, incident, vehicle } = location.state || {};
   const { id: routeClaimId } = useParams();
 
   // Try to load claim directly from localStorage if location.state is lost (refresh)
@@ -81,7 +81,7 @@ export default function ProcessingPage() {
             incidentLocation: activeIncident?.location,
             incidentType: activeIncident?.type,
           },
-          onProgress: (stage, message, agentIndex) => {
+          onProgress: (stage, message, _agentIndex) => {
             setMessages(prev => [...prev.slice(-8), message]);
 
             if (stage === 'predictor') {

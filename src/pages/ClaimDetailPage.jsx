@@ -1,6 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { useState } from 'react';
-import { ArrowLeft, CheckCircle, Clock, ShieldAlert, AlertTriangle, ChevronDown, ChevronUp, Edit3, Save, X, Eye, Shield, Brain, FileText, Download } from 'lucide-react';
+import { ArrowLeft, CheckCircle, Clock, ShieldAlert, ChevronDown, ChevronUp, Edit3, Save, X, Eye, Shield, Brain, FileText } from 'lucide-react';
 import { useClaims } from '../context/ClaimContext';
 import { captureSurveyorCorrection } from '../data/feedbackLoop';
 import { PARTS_DB, CURRENCY_SYMBOL, estimateTotalCost } from '../data/pricingEngine';
@@ -119,7 +119,7 @@ export default function ClaimDetailPage() {
   };
 
   const imagePreviewsRaw = results.imagePreviews || claim.imagePreviews || [];
-  const imagePreviews = imagePreviewsRaw.map(p => typeof p === 'string' ? p : p.url).filter(Boolean);
+  const imagePreviews = imagePreviewsRaw.map(p => typeof p === 'string' ? p : p.url).filter(p => p !== '[base64-stripped]' && Boolean(p));
   const safeImageIndex = Math.min(activeImageIndex, Math.max(0, imagePreviews.length - 1));
 
   return (

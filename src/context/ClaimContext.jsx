@@ -161,7 +161,7 @@ export function ClaimProvider({ children }) {
     </ClaimContext.Provider>
   );
 }
-
+// eslint-disable-next-line react-refresh/only-export-components
 export function useClaims() {
   const context = useContext(ClaimContext);
   if (!context) throw new Error('useClaims must be used within ClaimProvider');

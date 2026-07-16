@@ -43,7 +43,7 @@ export function captureSurveyorCorrection(correction) {
 /**
  * Categorize the type of correction
  */
-function categorizeCorrection(field, modelValue, correctedValue) {
+function categorizeCorrection(field, _modelValue, _correctedValue) {
   if (field === 'severity') return 'severity_adjustment';
   if (field === 'damage_type') return 'damage_reclassification';
   if (field === 'part') return 'part_correction';
