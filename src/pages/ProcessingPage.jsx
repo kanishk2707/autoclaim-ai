@@ -134,6 +134,7 @@ export default function ProcessingPage() {
         } else {
           if (isMounted) {
             setError(result.error);
+            setAgentStatuses(prev => prev.map(s => s === 'running' ? 'waiting' : s));
             const latestClaims = claimsRef.current;
             const targetClaim = latestClaims.find(c => c.id === routeClaimId);
             if (targetClaim) {
@@ -144,6 +145,7 @@ export default function ProcessingPage() {
       } catch (err) {
         if (isMounted) {
           setError(err.message);
+          setAgentStatuses(prev => prev.map(s => s === 'running' ? 'waiting' : s));
           const latestClaims = claimsRef.current;
           const targetClaim = latestClaims.find(c => c.id === routeClaimId);
           if (targetClaim) {
