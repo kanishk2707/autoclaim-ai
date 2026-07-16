@@ -1,5 +1,7 @@
 // Gemini API Service — fallback when Groq keys are exhausted
-const GEMINI_KEY = import.meta.env.VITE_GEMINI_API_KEY_REV ? import.meta.env.VITE_GEMINI_API_KEY_REV.split('').reverse().join('') : '';
+function getGeminiKey() {
+  return localStorage.getItem('autoclaim_gemini_key') || '';
+}
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
 
 async function sleep(ms) {
@@ -28,7 +30,7 @@ export async function geminiChat(prompt, options = {}) {
     retries = 2,
   } = options;
 
-  const url = `${GEMINI_API_URL}/${model}:generateContent?key=${GEMINI_KEY}`;
+  const url = `${GEMINI_API_URL}/${model}:generateContent?key=${getGeminiKey()}`;
 
   for (let attempt = 0; attempt < retries; attempt++) {
     try {
@@ -71,7 +73,7 @@ export async function geminiVision(images, prompt, options = {}) {
     maxTokens = 4096,
   } = options;
 
-  const url = `${GEMINI_API_URL}/${model}:generateContent?key=${GEMINI_KEY}`;
+  const url = `${GEMINI_API_URL}/${model}:generateContent?key=${getGeminiKey()}`;
 
   const parts = [];
 
@@ -114,5 +116,5 @@ export async function geminiVision(images, prompt, options = {}) {
 }
 
 export function isGeminiAvailable() {
-  return !!GEMINI_KEY;
+  return !!getGeminiKey();
 }

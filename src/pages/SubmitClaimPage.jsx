@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Upload, X, Camera, Car, FileText, CheckCircle, ChevronRight, ChevronLeft, AlertCircle, Zap } from 'lucide-react';
 import { useClaims } from '../context/ClaimContext';
 import { runTriAgentPipeline } from '../agents/orchestrator';
+import { isGroqAvailable } from '../api/groqService';
+import { isGeminiAvailable } from '../api/geminiService';
 import './SubmitClaimPage.css';
 
 const VEHICLE_MAKES = ['Maruti Suzuki', 'Hyundai', 'Tata', 'Mahindra', 'Kia', 'Toyota', 'Honda', 'MG', 'Skoda', 'Volkswagen', 'BMW', 'Mercedes-Benz', 'Audi', 'Other'];
@@ -105,6 +107,14 @@ export default function SubmitClaimPage() {
 
   const handleSubmit = async () => {
     if (!validateStep()) return;
+
+    if (!isGroqAvailable() && !isGeminiAvailable()) {
+      if (window.confirm('No AI API keys configured. You need to provide your own API key to run the pipeline locally. Go to Settings now?')) {
+        navigate('/settings');
+      }
+      return;
+    }
+
     setSubmitting(true);
 
     const claimId = `CLM-${Date.now()}`;

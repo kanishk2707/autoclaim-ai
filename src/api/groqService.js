@@ -1,9 +1,9 @@
 // Groq API Service — 3-key rotation with rate-limit detection
-const GROQ_KEYS = [
-  import.meta.env.VITE_GROQ_API_KEY_1_REV ? import.meta.env.VITE_GROQ_API_KEY_1_REV.split('').reverse().join('') : null,
-  import.meta.env.VITE_GROQ_API_KEY_2_REV ? import.meta.env.VITE_GROQ_API_KEY_2_REV.split('').reverse().join('') : null,
-  import.meta.env.VITE_GROQ_API_KEY_3_REV ? import.meta.env.VITE_GROQ_API_KEY_3_REV.split('').reverse().join('') : null,
-].filter(Boolean);
+function getGroqKeys() {
+  const keysStr = localStorage.getItem('autoclaim_groq_keys');
+  if (!keysStr) return [];
+  return keysStr.split(',').map(k => k.trim()).filter(Boolean);
+}
 
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
@@ -11,23 +11,30 @@ let currentKeyIndex = 0;
 const keyFailCounts = new Map();
 
 function getNextKey() {
-  if (GROQ_KEYS.length === 0) return null;
+  const keys = getGroqKeys();
+  if (keys.length === 0) return null;
+  if (currentKeyIndex >= keys.length) currentKeyIndex = 0;
+
   const startIndex = currentKeyIndex;
   do {
-    const key = GROQ_KEYS[currentKeyIndex];
+    const key = keys[currentKeyIndex];
     const fails = keyFailCounts.get(key) || 0;
     if (fails < 3) return key;
-    currentKeyIndex = (currentKeyIndex + 1) % GROQ_KEYS.length;
+    currentKeyIndex = (currentKeyIndex + 1) % keys.length;
   } while (currentKeyIndex !== startIndex);
   // Reset all fail counts and try again
   keyFailCounts.clear();
-  return GROQ_KEYS[currentKeyIndex];
+  return keys[currentKeyIndex];
 }
 
 function rotateKey() {
-  const key = GROQ_KEYS[currentKeyIndex];
+  const keys = getGroqKeys();
+  if (keys.length === 0) return;
+  if (currentKeyIndex >= keys.length) currentKeyIndex = 0;
+
+  const key = keys[currentKeyIndex];
   keyFailCounts.set(key, (keyFailCounts.get(key) || 0) + 1);
-  currentKeyIndex = (currentKeyIndex + 1) % GROQ_KEYS.length;
+  currentKeyIndex = (currentKeyIndex + 1) % keys.length;
 }
 
 async function sleep(ms) {
@@ -143,5 +150,5 @@ function fileToBase64(file) {
 }
 
 export function isGroqAvailable() {
-  return GROQ_KEYS.length > 0;
+  return getGroqKeys().length > 0;
 }
